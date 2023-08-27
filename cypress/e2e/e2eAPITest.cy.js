@@ -1,19 +1,46 @@
 ///<reference types="Cypress"/>
 describe('API Testing',()=>{
-
     it('CRUD API',()=>{
+        cy.fixture('postPayload.json').then((payload)=>{
+            let postpayload=payload
+        /*let payload = {
+            "name": "ABCD Automation Hub",
+            "email": "ABAut12omationHub1100021@abcdispostable.com",
+            "gender": "male",
+            "status": "active"
+        }*/
+        let putpayload ={ "name": "Balaji"}
 
-        cy.getAPI(4).then((response)=>{
-            cy.log(JSON.stringify(response))
-            let userId=response.body.data.id
-            cy.log("****userid***"   +  userId)
-            expect(response.status).to.be.equal(200)
-            expect(response.body.data.id).to.be.equal(4)
-            
-            
+            cy.postAPI(postpayload).then((responce)=>{
+            let userID=responce.body.id
+            expect(responce.status).to.be.eq(201)
+            cy.getAPI(userID).then((responce)=>{
+                expect(responce.status).to.be.eq(200)
 
+            })
+          cy.putAPI(userID,putpayload).then((responce)=>{
+                expect(responce.status).to.be.eq(200)
+                expect(responce.body).has.property('name','Balaji')
+               
+
+            })
+            cy.getAPI(userID).then((responce)=>{
+                cy.log(JSON.stringify(responce))
+                expect(responce.status).to.be.eq(200)
+                expect(responce.body).has.property('name','Balaji')
+
+            })
+           
+           cy.deleteAPI(userID).then((responce)=>{
+                expect(responce.status).to.be.eq(204)
+
+            })
+           
+           
+          })
             
-        })
-        
     })
 })
+        
+})
+
